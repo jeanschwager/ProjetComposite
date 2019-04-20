@@ -1,0 +1,192 @@
+ ***** Projet Optimisation materiaux composites 
+ *** Jean Schwager 
+ *********************** 
+   
+   
+ **reglages du projet 
+ OPTI DIME 3 ELEM TRI3; 
+   
+ *______________________Caracetristiques materiaux 
+ E1=181e9; 
+ E2=10.3e9; 
+ NU12=0.28; 
+ NU21=(E2*NU12)/E1; 
+ G12= 7.17e9; 
+ tcou=0.1e-3; 
+ *______________________ Caracteristiques géometriques 
+ c0=0.5; 
+ c1=0.5*c0; 
+ sw0=0.5; 
+ L0=0.5; 
+   
+ *---- nombre d'élément par droite ---- 
+ nb=20; 
+   
+   
+ *_______________________ Direction d'orthotropie 
+   
+   
+ *---- Selon la direction x ---- 
+   
+ *dir0 = 1. 0. 0.; 
+   
+ *---- Selon la demi-corde ---- 
+ Hyp1 = ((L0*L0)+(c0*c0))**(1./2.); 
+ div1 = L0/Hyp1; 
+ ang1 = ACOS div1; 
+ dir0 = ((COS ang1) (SIN ang1) 0.); 
+ vcorde=(0.5  0.375  0.); 
+   
+ *_______________________ Construction du mailllage 
+   
+ pO = 0. 0. 0. ; 
+ pA = L0 sw0 0.; 
+ pB = L0 (sw0+c1) 0.; 
+ pC= 0. c0 0.; 
+ p2 = L0 0. 0.; 
+   
+   
+ l1= DROI nb pO pA; 
+ l2= DROI nb pA pB; 
+ l3= DROI nb pB pC; 
+ l4= DROI nb pC pO; 
+   
+ cont1= l1 et l2 et l3 et l4; 
+ s0 = SURF 'PLAN' (cont1); 
+ *TRAC s0; 
+   
+ *---- Nombre de couches ---- 
+ Ncou=16; 
+   
+ *---- Epaisseur de la plaque ---- 
+ h0=Ncou*tcou; 
+   
+ *---- Modèle ---- 
+   
+ mo0 = MODE s0 'MECANIQUE' 'ELASTIQUE' 'ORTHOTROPE' 'DKT'; 
+ *mat0= MATE mo0 'YG1' E01 'YG2' E02 'NU12' NU0 'G12' G0 'DIRECTION' pA 'PARALLELE' 'EPAI' h0; 
+   
+ *K0=RIGI mo0 mat0; 
+   
+ *generation du profil de pression 
+ xs0 = COOR 1 s0 ; 
+ ys0 = COOR 2 s0 ; 
+ * coordonnee y du bord d'attaque le long du span (fonction de x) 
+ ysmin = sw0 / l0 * xs0 ; 
+ * longueur de corde le long du span (fonction de x) 
+ cc0 = ((c1 - c0) / l0 * xs0) + (MANU CHPO s0 SCAL c0) ; 
+ * champ constant egal a 1 
+ one = MANU CHPO s0 scal 1. ; 
+ *profil aerodynamique de pression 
+ yref0 = (ys0 - ysmin) / cc0 ; 
+ pr0 = cc0 / c0 * (yref0 * ((one - yref0) ** 4)) ; 
+ frc0 = PRESS COQU mo0 pr0 NORM ; 
+   
+ F1 = FORC 'FZ' -800. pA; 
+   
+ vF1 = VECT F1 1.'FORC' ROUGE; 
+ *trac vF1 s0; 
+   
+ cl1= BLOQ 'UX' 'UZ' 'UY' 'RX' 'RY' 'RZ' l4; 
+   
+ *u1 = RESO (K0 ET cl1) frc0; 
+   
+ *TRAC u1 s0; 
+   
+ *OPTI DONN 4; 
+   
+   
+   
+ *_________________________________Matrices de rigidité Q 
+   
+ Q11 = E1/(1 - (NU12*NU21)); 
+ Q22 = E2/(1 - (NU12*NU21)); 
+ Q12 = (NU12*E2)/(1 - ((E2/E1)*NU12)); 
+ Q66 = G12; 
+   
+ ****************************** 
+ * Invariants des contraintes * 
+ ****************************** 
+   
+   
+ T0CB=(Q11 - (2*Q12) + (4*Q66) + Q22)/8.; 
+ T1CB=(Q11 + (2*Q12) + Q22)/8.; 
+ R0CB=(Q11 + Q22 - (2*Q12) - (4*Q66))/8.; 
+ R1CB=(Q11 - Q22)/8.; 
+   
+ *list R1CB; 
+   
+ ************* 
+ * ANGLE-PLY * 
+ ************* 
+   
+ pas1 = R1CB/50; 
+ R1prog=PROG 0. PAS pas1 R1CB; 
+ RKap = PROG; 
+ ENET1 = PROG; 
+ nb1 = DIME R1ap; 
+   
+ Rk=2.*R0CB*((R1prog/R1CB)**2.) - R0CB.; 
+   
+ Domaine=EVOL MANU Rk R1prog; 
+   
+ *DESS Domaine; 
+   
+ SClist=PROG; 
+ APlist=PROG; 
+ Cplist=PROG; 
+ T0*=T0CB; 
+ T1*=T1CB; 
+ *------------------------------------------------------------- 
+ *Isotrope 
+ *------------------------------------------------------------- 
+ R1_norm=0.; 
+ Rk_norm=0.; 
+   
+ A11=T0CB + (2*T1CB) + Rk_norm + (4*R1_norm); 
+ A22=T0CB + (2*T1CB) + Rk_norm - (4*R1_norm); 
+ A12=((-1)*T0CB) + (2*T1CB) - Rk_norm; 
+ A66=T0CB  - Rk_norm; 
+ A16=0.; 
+ A26=0.; 
+   
+ Ex=A11; 
+ Ey=A22; 
+ Gxy=A66; 
+ nu_xy=A12/A22; 
+   
+   
+ ******************************************************* 
+ * Matériau, Matrice de Rigidité et conditions limites * 
+ ******************************************************* 
+   
+ * Matériau 
+   
+ mat0 = MATE mo0 'DIRE' dir0 'PARALLELE' 'YG1' Ex 'YG2' Ey 'NU12' nu_xy 
+ 'G12' Gxy 'EPAI' h0; 
+   
+ * Rigidité 
+   
+ rig0 = RIGI mo0 mat0; 
+   
+ * Conditions limites 
+   
+ cl0 = BLOQ DEPL ROTA l4; 
+   
+ * Assemblage 
+ rigtot1 = rig0 ET cl0; 
+   
+ *Résolution 
+   
+ usol = RESO rigtot1 frc0; 
+   
+   
+   
+   
+ *********************** 
+ * Calcul de l'énergie * 
+ *********************** 
+   
+ sig1 = SIGM mo0 mat0 usol ; 
+ eps1= EPSI mo0 mat0 usol; 
+ Ener1 = ENER mo0 eps1 sig1; 

@@ -1,11 +1,43 @@
+***** Projet Optimisation materiaux composites
+*** Jean Schwager
+***********************
+
+
+**reglages du projet
 OPTI DIME 3 ELEM TRI3;
 
+*______________________Caracetristiques materiaux
+E1=181e9;
+E2=10.3e9;
+NU12=0.28;
+NU21=(E2*NU12)/E1;
+G12= 7.17e9;
+tcou=0.1e-3;
+*______________________ Caracteristiques géometriques
 c0=0.5;
 c1=0.5*c0;
 sw0=0.5;
 L0=0.5;
 
-nb=40;
+*---- nombre d'élément par droite ----
+nb=20;
+
+
+*_______________________ Direction d'orthotropie
+
+
+*---- Selon la direction x ----
+
+*dir0 = 1. 0. 0.;
+
+*---- Selon la demi-corde ----
+Hyp1 = ((L0*L0)+(c0*c0))**(1./2.);
+div1 = L0/Hyp1;
+ang1 = ACOS div1;
+dir0 = ((COS ang1) (SIN ang1) 0.);
+vcorde=(0.5  0.375  0.);
+
+*_______________________ Construction du mailllage
 
 pO = 0. 0. 0. ;
 pA = L0 sw0 0.;
@@ -13,13 +45,8 @@ pB = L0 (sw0+c1) 0.;
 pC= 0. c0 0.;
 p2 = L0 0. 0.;
 
-E01=181e9;
-E02=10.3e9;
-NU0=0.28;
-G0= 7.17e9;
 
-
-l1= DROI nb pO pA;
+l1= DROI nb pO pA; 
 l2= DROI nb pA pB;
 l3= DROI nb pB pC;
 l4= DROI nb pC pO;
@@ -28,16 +55,18 @@ cont1= l1 et l2 et l3 et l4;
 s0 = SURF 'PLAN' (cont1);
 *TRAC s0;
 
+*---- Nombre de couches ----
 Ncou=16;
-tcou=0.1e-3;
 
+*---- Epaisseur de la plaque ----
 h0=Ncou*tcou;
 
+*---- Modèle ----
+
 mo0 = MODE s0 'MECANIQUE' 'ELASTIQUE' 'ORTHOTROPE' 'DKT';
+*mat0= MATE mo0 'YG1' E01 'YG2' E02 'NU12' NU0 'G12' G0 'DIRECTION' pA 'PARALLELE' 'EPAI' h0;
 
-mat0= MATE mo0 'YG1' E01 'YG2' E02 'NU12' NU0 'G12' G0 'DIRECTION' pA 'PARALLELE' 'EPAI' h0;
-
-K0=RIGI mo0 mat0;
+*K0=RIGI mo0 mat0;
 
 *generation du profil de pression
 xs0 = COOR 1 s0 ;
@@ -56,14 +85,372 @@ frc0 = PRESS COQU mo0 pr0 NORM ;
 F1 = FORC 'FZ' -800. pA;
 
 vF1 = VECT F1 1.'FORC' ROUGE;
-trac vF1 s0;
+*trac vF1 s0;
 
 cl1= BLOQ 'UX' 'UZ' 'UY' 'RX' 'RY' 'RZ' l4;
 
-u1 = RESO (K0 ET cl1) frc0;
+*u1 = RESO (K0 ET cl1) frc0;
 
-TRAC u1 s0;
+*TRAC u1 s0;
 
-OPTI DONN 4;
+*OPTI DONN 4;
+
+
+
+*_________________________________Matrices de rigidité Q 
+
+Q11 = E1/(1 - (NU12*NU21));
+Q22 = E2/(1 - (NU12*NU21));
+Q12 = (NU12*E2)/(1 - ((E2/E1)*NU12));
+Q66 = G12;
+
+******************************
+* Invariants des contraintes *
+******************************
+
+
+T0CB=(Q11 - (2*Q12) + (4*Q66) + Q22)/8.;
+T1CB=(Q11 + (2*Q12) + Q22)/8.;
+R0CB=(Q11 + Q22 - (2*Q12) - (4*Q66))/8.;
+R1CB=(Q11 - Q22)/8.;
+
+*list R1CB;
+
+*************
+* ANGLE-PLY *
+*************
+
+pas1 = R1CB/50;
+R1prog=PROG 0. PAS pas1 R1CB;
+RKap = PROG;
+ENET1 = PROG;
+nb1 = DIME R1ap;
+
+Rk=2.*R0CB*((R1prog/R1CB)**2.) - R0CB.; 
+
+Domaine=EVOL MANU Rk R1prog;
+
+*DESS Domaine;
+
+SClist=PROG;
+APlist=PROG;
+Cplist=PROG;
+*-------------------------------------------------------------
+*Isotrope
+*-------------------------------------------------------------
+R1_norm=0.;
+Rk_norm=0.;
+
+A11=T0CB + (2*T1CB) + Rk_norm + (4*R1_norm);
+A22=T0CB + (2*T1CB) + Rk_norm - (4*R1_norm);
+A12=((-1)*T0CB) + (2*T1CB) - Rk_norm;
+A66=T0CB  - Rk_norm;
+A16=0.;
+A26=0.;
+
+Ex=A11;
+Ey=A22;
+Gxy=A66;
+nu_xy=A12/A22;
+
+
+*******************************************************
+* Matériau, Matrice de Rigidité et conditions limites *
+*******************************************************
+
+* Matériau
+
+mat0 = MATE mo0 'DIRE' dir0 'PARALLELE' 'YG1' Ex 'YG2' Ey 'NU12' nu_xy 
+'G12' Gxy 'EPAI' h0;
+
+* Rigidité 
+
+rig0 = RIGI mo0 mat0; 
+
+* Conditions limites
+
+cl0 = BLOQ DEPL ROTA l4;
+
+* Assemblage
+rigtot1 = rig0 ET cl0;
+
+*Résolution
+
+usol = RESO rigtot1 frc0;
+
+***********************
+* Calcul de l'énergie *
+***********************
+
+sig1 = SIGM mo0 mat0 usol ;
+eps1= EPSI mo0 mat0 usol;
+Ener1 = ENER mo0 eps1 sig1;
+Rg0 = INTG mo0 Ener1 mat0;
+TRAC sig1 mo0 mat0 s0;
+TRAC eps1 mo0 mat0 s0;
+
+aply = EVOL 'BLEU' 'MANU' 'LEGE' 'Angle-Ply' 
+'Rk*' Rkap 'R1*' R1ap;
+DESS aply;
+
+*-------------------------------------------------------------
+*Cross-Ply
+*-------------------------------------------------------------
+
+vexprog=PROG 1. 0.5;
+veyprog= PROG 0. 0.375;
+
+
+R1prog=PROG 0. PAS ((R1_CB)/50.) R1_CB;
+Rigprog1= PROG;
+Riprog2= PROG;
+
+kk=0;
+
+REPE blo2 2;
+kk=kk + 1;
+a= EXTR vexprog kk;
+b=EXTR veyprog kk;
+ii=0;
+REPE bloc1 (DIME R1prog);
+ii=ii + 1;
+R1_norm=EXTR R1prog ii;
+Rk_norm= R0_CB;
+
+A11=T0_CB + (2*T1_CB) + Rk_norm + (4*R1_norm);
+A22=T0_CB + (2*T1_CB) + Rk_norm - (4*R1_norm);
+A12=((-1)*T0_CB) + (2*T1_CB) - Rk_norm;
+A66=T0_CB  - Rk_norm;
+A16=0.;
+A26=0.;
+
+Ex=(A11*A22 - ((A12)**2))/A22;
+Ey=(A11*A22 - ((A12)**2))/A11;
+Gxy=A66;
+nu_xy=A12/A22;
+
+*----- Definition du modele et du materiau -------*
+
+mo0 = MODE s0 MECANIQUE ELASTIQUE ORTHOTROPE 'DKT' ;
+mat0 = MATE mo0 'DIRECTION'  (a b 0.) 'PARALLELE'
+YG1 Ex 'YG2' Ey NU12 nu_xy G12 Gxy 'EPAI' H;
+
+
+*generation du profil de pression
+xs0 = coor 1 s0 ;
+ys0 = coor 2 s0 ;
+* coordonnee y du bord d'attaque le long du span (fonction de x)
+ysmin = sw0 / l0 * xs0 ;
+* longueur de corde le long du span (fonction de x)
+cc0 = ((c1 - c0) / l0 * xs0) + (manu chpo s0 scal c0) ;
+* champ constant egal a 1
+one = manu chpo s0 scal 1. ;
+*profil aerodynamique de pression
+yref0 = (ys0 - ysmin) / cc0 ;
+pr0 = cc0 / c0 * (yref0 * ((one - yref0) ** 4)) ;
+frc0 = press coqu mo0 pr0 norm ;
+
+*TRAC frc0 s0;
+
+*Condition lim
+cl1=BLOQ DEPLA ROTA l4;
+
+*Assemblage
+*----------
+rig1 = RIGI mo0 mat0;
+rig1 = rig1 et cl1;
+
+*Resolution
+*----------
+res1= RESO rig1 frc0 ;
+*TRAC s0 res1 ;
+
+def0= DEFO s0 res1 0. VERT;
+def1= DEFO s0 res1 ROUGE;
+*TRAC (def0 et def1);
+
+
+*On calcule et trace les contraintes
+sigm0 = SIGM mo0 mat0 res1 ;
+*TRAC sigm0 mo0 mat0 s0;
+
+
+*Deformations
+eps0=EPSI mo0 mat0 res1;
+*TRAC eps0 mo0 mat0 s0;
+
+
+Ener1  =  ENER  mo0 sigm0 eps0;
+
+Rg0  =  0.5*(INTG mo0 Ener1); 
+
+SI (kk EGA 1);
+Rigprog1=Rigprog1 et Rg0;
+FINSI;
+
+SI (kk EGA 2);
+Riprog2=Riprog2 et Rg0;
+FINSI;
+
+aoptiCP='ACOS' (R1_norm/R1_CB);
+alpCP=0.5*aoptiCP;
+
+CPlist=Cplist et alpCP;
+
+Fin bloc1;
+Fin blo2;
+
+*opti donn 5;
+
+evolr1=EVOL VERT MANU R1prog Rigprog1 ;
+evolr2=EVOL ROUGE MANU R1prog Riprog2 ;
+DESS (evolr1 et evolr2)'GRIL' ;
+
+
+
+*************
+* CROSS-PLY *
+*************
+
+* Listes à remplir 
+
+R1cp = PROG 0 PAS pas1 R1CB;
+Rkcp = PROG ;
+nb1 = DIME R1cp;
+enet2 = PROG;
+
+REPE Boucle2 nb1;
+Rkcp2 = R0CB;
+Rkcp = Rkcp et Rkcp2;
+FIN Boucle2;
+
+
+REPE Boucle3 nb1 ;
+R1ex2 = EXTR R1cp &Boucle3;
+Rkex2 = EXTR Rkcp &boucle3;
+
+Q11cp = T0CB+T1CB+T1CB+Rkex2+R1ex2+R1ex2+R1ex2+R1ex2;
+Q22cp = T0CB+T1CB+T1CB+Rkex2-R1ex2-R1ex2-R1ex2-R1ex2;
+Q12cp = T1CB+T1CB-T0CB-Rkex2;
+Q66cp = T0CB-Rkex2;
+
+Ex = (Q11cp*Q22cp-(Q12cp*Q12cp))/Q22cp;
+Ey = (Q11cp*Q22cp-(Q12cp*Q12cp))/Q11cp;
+Gxy = Q66cp;
+nuxy = Q12cp/Q22cp;
+
+*******************************************************
+* Matériau, Matrice de Rigidité et conditions limites *
+*******************************************************
+
+* Matériau 
+
+ma0 = MATE mo0 'DIRE' dir0 PARALLELE 'YG1' Ex 'YG2' Ey 'NU12' nuxy 
+'G12' Gxy 'EPAI' H;
+
+* Rigidité 
+
+rig0 = RIGI mo0 ma0; 
+
+* Conditions limites 
+
+cl0 = BLOQ DEPL ROTA d3;
+
+*Assemblage
+
+rigtot = rig0 ET cl0;
+
+*Résolution
+
+usol = RESO rigtot frc0;
+
+***********************
+* Calcul de l'énergie *
+***********************
+
+sig2 = SIGMA usol mo0 ma0;
+eps2 = EPSI mo0 usol ma0;
+ene2 = ENER mo0 eps2 sig2;
+enet = INTG mo0 ene2 ma0;
+enet2 = enet2 ET enet;
+FIN Boucle3;
+
+* On trace la droite des cross-ply 
+cply = EVOL 'ROUG' 'MANU' 'LEGE' 'Cross-Ply' 
+'Rk*' Rkcp 'R1*' R1cp;
+DESS cply;
+
+**********************
+* SYMETRIE DU CARREE *
+**********************
+
+enet3 = PROG;
+R1sc = PROG;
+NR0CB = -1*R0CB;
+Rksc = PROG NR0CB PAS pas1 R0CB  ;
+nb1 = DIME Rksc;
+
+REPE Boucle4 nb1 ;
+R1sc2 = 0.;
+R1sc = R1sc et R1sc2;
+FIN Boucle4;
+
+* On trace la droite de la symetrie carree
+symc = EVOL 'VERT' 'MANU' 'LEGE' 'Sym-carree' 
+'Rk*' Rksc 'R1*' R1sc;
+DESS symc;
+
+REPE Boucle5 nb1 ;
+R1ex = EXTR R1sc &Boucle5;
+Rke2 = EXTR Rksc &Boucle5;
+
+Q11sc = T0CB+T1CB+T1CB+Rke2+R1ex+R1ex+R1ex+R1ex;
+Q22sc = T0CB+T1CB+T1CB+Rke2-R1ex-R1ex-R1ex-R1ex;
+Q12sc = T1CB+T1CB-T0CB-Rke2;
+Q66sc = T0CB-Rke2;
+
+Ex = (Q11sc*Q22sc-(Q12sc*Q12sc))/Q22sc;
+Ey = (Q11sc*Q22sc-(Q12sc*Q12sc))/Q11sc;
+Gxy = Q66sc;
+nuxy = Q12sc/Q22sc;
+
+*******************************************************
+* Matériau, Matrice de Rigidité et conditions limites *
+*******************************************************
+
+ma0 = MATE mo0 'DIRE' dir0 PARALLELE 'YG1' Ex 'YG2' Ey 'NU12' nuxy 
+'G12' Gxy 'EPAI' H;
+rig0 = RIGI mo0 ma0; 
+
+cl0 = BLOQ DEPL ROTA d3;
+rigtot = rig0 ET cl0;
+usol = RESO rigtot frc0;
+
+***********************
+* Calcul de l'énergie *
+***********************
+sig3 = SIGMA usol mo0 ma0;
+eps3 = EPSI mo0 usol ma0;
+ene3 = ENER mo0 eps3 sig3;
+enet = INTG mo0 ene1 ma0;
+enet3 = enet3 ET enet;
+FIN Boucle5;
+
+*****************************
+* Minimisation de l'énergie *
+*****************************
+
+minen1 = MINI enet1;
+minen2 = MINI enet2;
+minen3 = MINI enet3;
+list minen1;
+list minen2;
+list minen3;
+mintot = MINI (enet1 ET enet2 ET enet3);
+MESS 'L energie elastique minimale est : ' mintot;
+
+*Tracage du domaine des stratifies orthotropes
+DESS (aply ET cply ET symc);
+
 
 FIN;

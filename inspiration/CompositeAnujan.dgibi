@@ -1,0 +1,255 @@
+**********************************************************
+**** Optimisation d'une aile delta en composite **********
+*********************************************;*************
+*OPTI DIME 3 ELEM TRI3 MODE PLAN;
+OPTI DIME 3 ELEM TRI3;
+OPTI EPSI LINEAIRE;
+
+* Géometrie aile delta en composite
+*DENS 0.05;
+
+* Données géomètriques
+LO = 0.5;
+cO= 0.5;
+swO = 0.50;
+c1 = 0.5*cO;
+
+OO = 0. 0. 0.;
+AA = LO swO 0.;
+BB = LO (swO+c1) 0.;
+CC = 0. cO 0.;
+
+l1 = DROI 50 OO AA;
+l2 = DROI 20 AA BB;
+l3 = DROI 40 BB CC;
+l4 = DROI 30 CC OO;
+
+cont1 = l1 et l2 et l3 et l4;
+sO = SURF cont1 PLAN;
+TRAC sO;
+
+* Porpriete
+N = 16;
+tt = 0.1e-3;
+H = N*tt;
+E1 = 181.e9;
+E2 = 10.3e9;
+G12 = 7.17e9;
+nu12 = 0.28;
+rep = (1. 0. 0.);
+
+* Definition modèle et materiau 
+********* 'DIRECTIONT' ou 'RADIAL'
+mo0 = MODE sO MECANIQUE ELASTIQUE ORTHOTROPE DKT;
+
+* Chargement
+**** Generation du profil de pression
+xsO = coor 1 sO;
+ysO = coor 2 sO;
+**** Coordonnee y du bord d'attaque le long du span (fonction de x)
+ysmin = swO /10 * xsO;
+**** longueur de corde le long du span (fonction de x)
+ccO = ((c1 - cO) / 10 * xsO) + (manu chpo sO scal cO);
+**** Champ constant égal à 1
+one = manu chpo sO scal 1.;
+**** Porfil aérodynamique de pression
+yrefO = (ysO-ysmin)/ccO;
+prO = ccO / cO * (yrefO * ((one - yrefO) ** 4));
+frcO = pres coqu mo0 prO norm;
+
+* Conditions aux limites
+cl0 = BLOQ DEPL ROTA l4;
+
+
+
+******************** Couche de Base *******************
+* Relation de reciprocite
+nu21 = nu12*(E2/E1);
+Q11 = E1/(1 - (nu12*nu21));
+Q22 = E2/(1 - (nu12*nu21));
+Q12 = (nu12*E2)/(1 - (nu12*nu21));
+Q66 = G12;
+
+
+
+* Module polaire de la couche de base - Invariant des contraintes
+T0_CB = (Q11 - (2*Q12) + (4*Q66) + Q22)/8.;
+T1_CB = (Q11 + (2*Q12) + Q12)/8.;
+R0_CB = (Q11 - (2*Q12) - (4*Q66) + Q22)/8.;
+R1_CB = (Q11 - Q22)/8.;
+
+
+
+
+
+*************************Angle- Ply *******************
+*pasRk = 1.;
+*Rkprog = prog 0. PAS 1. 25.;
+*T0 = T0_CB;
+*T1 = T1_CB;
+pas0 = R1_CB/50;
+R1e = PROG 0 PAS pas0 R1_CB;
+RKK = PROG;
+EnergyAP = prog;
+R1exx = prog;
+
+REPE ii (dime R1e);
+
+R1ex = extr R1e &ii;
+R1exx = R1exx et R1ex;
+aa = 2*((R1ex/R1_CB)*(R1ex/R1_CB));
+RKe2 = R0_CB*(aa - 1);
+RKK = RKK et RKe2;
+T0 = T0_CB;
+T1 = T1_CB;
+
+Q11ap = T0_CB + (2*T1_CB) + RKe2 + (4*R1ex);
+Q22ap = T0_CB + (2*T1_CB) + RKe2 - (4*R1ex);
+Q12ap = (2*T1_CB) - RKe2 - T0_CB;
+Q66ap = T0_CB - RKe2;
+
+Ex = ((Q11ap*Q22ap) - (Q12ap*Q12ap))/Q22ap;
+Ey = ((Q11ap*Q22ap) - (Q12ap*Q12ap))/Q11ap;
+Gxy = Q66ap;
+nuxy = Q12ap/Q22ap;
+
+
+mat0 = MATE mo0 'DIRECTION' rep 'PARALLELE'
+'YG1' Ex 'YG2' Ey 'NU12' nuxy 'G12' Gxy 
+'EPAI' H;
+
+Krigi = RIGI mo0 mat0;
+
+* Conditions aux limites
+cl0 = BLOQ DEPL ROTA l4;
+Ktot = Krigi et cl0;
+
+Usol = RESO Ktot frcO;
+
+sigAP = SIGM Usol mo0 mat0;
+defAP = EPSI mo0 Usol mat0;
+energy = ENER mo0 defAP sigAP;
+Eangply = INTG mo0 energy mat0;
+*Eangply = (0.5)*(INTG mo0 energy mat0);
+EnergyAP = EnergyAP et Eangply;
+
+fin ii;
+
+EVOL1 = EVOL 'BLEU' MANU 'RK' RKK 'R1' R1exx;
+
+*PHI0=PHI1=0 ORTHOTRPE
+
+*******************************************************************
+
+
+***************** Cross-Ply****************************************
+R1exx2 = prog;
+EnergyCP = prog;
+RKCP2 = prog;
+
+REPE ii (dime R1e);
+
+R1ex2 = extr R1e &ii;
+R1exx2 = R1exx2 et R1ex2;
+RKCP = R0_CB;
+RKCP2 = RKCP2 et RKCP; 
+*T0 = T0_CB;
+*T1 = T1_CB;
+
+Q11cp = T0_CB +(2*T1_CB) + RKCP + (4*R1ex2);
+Q22cp = T0_CB + (2*T1_CB) + RKCP - (4*R1ex2);
+Q12cp = T1_CB + T1_CB - RKe2 - T0_CB;
+Q66cp = T0_CB - RKCP;
+
+Excpcp = ((Q11cp*Q22cp) - (Q12cp*Q12cp))/Q22cp;
+*Exx =  Exx et Ex;
+Eycpcp = ((Q11cp*Q22cp) - (Q12cp*Q12cp))/Q11cp;
+Gxycpcp = Q66cp;
+nuxycpcp = Q12cp/Q22cp;
+
+
+mat1 = MATE mo0 'DIRECTION' rep 'PARALLELE'
+'YG1' Excpcp 'YG2' Eycpcp 'NU12' nuxycpcp 'G12' Gxycpcp 
+'EPAI' H;
+
+Krigi = RIGI mo0 mat1;
+
+* Conditions aux limites
+cl0 = BLOQ DEPL ROTA l4;
+Ktot = Krigi et cl0;
+
+Usol = RESO Ktot frcO;
+
+sigCP = SIGM Usol mo0 mat0;
+defCP = EPSI mo0 Usol mat0;
+energy = ENER mo0 sigCP defCP;
+Ecroply = INTG mo0 energy mat0;
+*Eangply = (0.5)*INTG mo0 energy mat0;
+EnergyCP = EnergyCP et Ecroply;
+
+fin ii;
+
+EVOL2 = EVOL 'VERT' MANU 'RK' RKCP2 'R1' R1exx2;
+
+
+*PHI0=PHI1=0 ORTHOTRPE
+*******************************************************************
+
+
+*************************** Symétrie Carré ************************
+
+pas0 = R0_CB/50;
+RkSC = PROG ((-1)*R0_CB) PAS pas0 R0_CB;
+Engy_SC = prog;
+R1SC = prog;
+R11SC = 0;
+REPE ii (dime RkSC);
+
+RKKSC = extr RkSC &ii;
+R1SC = R1SC et R11SC;
+*T0 = T0_CB;
+*T1 = T1_CB;
+
+Q11SC = T0_CB + (2*T1_CB) + RKKSC+(4*R11SC);
+Q22SC = T0_CB + (2*T1_CB) + RKKSC-(4*R11SC);
+Q12SC = T1_CB + T1_CB - RKKSC - T0_CB;
+Q66SC = T0_CB - RKKSC;
+
+ExSC = ((Q11SC*Q22SC)-(Q12SC*Q12SC))/Q22SC;
+*Exx =  Exx et Ex;
+EySC = ((Q11SC*Q22SC)-(Q12SC*Q12SC))/Q11SC;
+GxySC = Q66SC;
+nuxySC = Q12SC/Q22SC;
+
+
+mat2 = MATE mo0 'DIRECTION' rep 'PARALLELE'
+'YG1' ExSC 'YG2' EySC 'NU12' nuxySC 'G12' GxySC 
+'EPAI' H;
+
+Krigi = RIGI mo0 mat2;
+
+* Conditions aux limites
+cl0 = BLOQ DEPL ROTA l4;
+Ktot = Krigi et cl0;
+
+Usol = RESO Ktot frcO;
+
+sigSC = SIGM Usol mo0 mat0;
+defSC = EPSI mo0 Usol mat0;
+energySC = ENER mo0 sigSC defSC;
+E_SC = INTG mo0 energySC mat0;
+*Eangply = (0.5)*INTG mo0 energy mat0;
+Engy_SC = Engy_SC et E_SC;
+
+fin ii;
+
+EVOL3 = EVOL 'ROUG' MANU 'RK' R1SC 'R1' R1SC;
+
+
+*PHI0=PHI1=0 ORTHOTRPE
+
+*DESS (EVOL1 ET EVOL2 ET EVOL3)
+
+EVOL4 = EVOL 'BLEU' MANU 'R1' R1e 'EnergyAP' EnergyAP;
+EVOL5 = EVOL 'VERT' MANU 'R1' R1exx2 'EnergyCP' EnergyCP;
+EVOL6 = EVOL 'ROUG' MANU 'R1' R1SC 'EnergyCP' Engy_SC;

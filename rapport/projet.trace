@@ -1,0 +1,70 @@
+ OPTI DIME 3 ELEM TRI3; 
+   
+ c0=0.5; 
+ c1=0.5*c0; 
+ sw0=0.5; 
+ L0=0.5; 
+   
+ nb=40; 
+   
+ pO = 0. 0. 0. ; 
+ pA = L0 sw0 0.; 
+ pB = L0 (sw0+c1) 0.; 
+ pC= 0. c0 0.; 
+ p2 = L0 0. 0.; 
+   
+ E01=181e9; 
+ E02=10.3e9; 
+ NU0=0.28; 
+ G0= 7.17e9; 
+   
+   
+ l1= DROI nb pO pA; 
+ l2= DROI nb pA pB; 
+ l3= DROI nb pB pC; 
+ l4= DROI nb pC pO; 
+   
+ cont1= l1 et l2 et l3 et l4; 
+ s0 = SURF 'PLAN' (cont1); 
+ *TRAC s0; 
+   
+ Ncou=16; 
+ tcou=0.1e-3; 
+   
+ h0=Ncou*tcou; 
+   
+ mo0 = MODE s0 'MECANIQUE' 'ELASTIQUE' 'ORTHOTROPE' 'DKT'; 
+   
+ mat0= MATE mo0 'YG1' E01 'YG2' E02 'NU12' NU0 'G12' G0 'DIRECTION' pA 'PARALLELE' 'EPAI' h0; 
+   
+ K0=RIGI mo0 mat0; 
+   
+ *generation du profil de pression 
+ xs0 = COOR 1 s0 ; 
+ ys0 = COOR 2 s0 ; 
+ * coordonnee y du bord d'attaque le long du span (fonction de x) 
+ ysmin = sw0 / l0 * xs0 ; 
+ * longueur de corde le long du span (fonction de x) 
+ cc0 = ((c1 - c0) / l0 * xs0) + (MANU CHPO s0 SCAL c0) ; 
+ * champ constant egal a 1 
+ one = MANU CHPO s0 scal 1. ; 
+ *profil aerodynamique de pression 
+ yref0 = (ys0 - ysmin) / cc0 ; 
+ pr0 = cc0 / c0 * (yref0 * ((one - yref0) ** 4)) ; 
+ frc0 = PRESS COQU mo0 pr0 NORM ; 
+   
+ F1 = FORC 'FZ' -800. pA; 
+   
+ vF1 = VECT F1 1.'FORC' ROUGE; 
+ trac vF1 s0; 
+   
+ cl1= BLOQ 'UX' 'UZ' 'UY' 'RX' 'RY' 'RZ' l4; 
+   
+ u1 = RESO (K0 ET cl1) frc0; 
+   
+ TRAC u1 s0; 
+   
+ OPTI DONN 4; 
+ opti donn 3; 
+   
+ FIN; 

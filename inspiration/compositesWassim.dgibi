@@ -1,0 +1,184 @@
+***** Optimisation d’une aile delta en composite *******
+*****        Wassim Ben Mimoun 20/02/2018        *******
+
+OPTI DIME 3 ELEM TRI3;
+OPTI EPSI LINEAIRE;
+
+*DONNEES
+N = 16;
+t= 0.1E-3;
+H=N*t;
+E1 = 181E9;
+E2 = 10.3E9;
+G12 = 7.17E9;
+nu12 = 0.28;
+nu21 = (E2/E1)*nu12;
+
+*GEOMETRIE
+L0 = 0.5;
+c0 = 0.5;
+sw0 = 0.50;
+c1 = 0.5*c0;
+
+OO = 0. 0. 0.;
+AA = L0 sw0 0.;
+BB = L0 (sw0+c1) 0.;
+CC = 0. c0 0.;
+
+l1 = DROI 50 OO AA;
+l2 = DROI 20 AA BB;
+l3 = DROI 40 BB CC;
+l4 = DROI 30 CC OO;
+
+cont1 = l1 et l2 et l3 et l4;
+s0 = SURF cont1 PLAN;
+TRAC s0;
+
+mo0 = MODE s0 MECANIQUE ELASTIQUE ORTHOTROPE DKT;
+
+*CL
+cl0 = BLOQ DEPL ROTA L4;
+
+*CHARGEMENT
+
+*generation du profil de pression
+xs0 = coor 1 s0 ;
+ys0 = coor 2 s0 ;
+* coordonnee y du bord d'attaque le long du span
+*(fonction de x)
+ysmin = sw0 / l0 * xs0 ;
+* longueur de corde le long du span (fonction de x)
+cc0 = ((c1 - c0) / l0 * xs0) + (manu chpo s0 scal c0) ;
+* champ constant egal a 1
+one = manu chpo s0 scal 1. ;
+*profil aerodynamique de pression
+yref0 = (ys0 - ysmin) / cc0 ;
+pr0 = cc0 / c0 * (yref0 * ((one - yref0) ** 4)) ;
+frc0 = press coqu mo0 pr0 norm ;
+
+*COUCHE DE BASE
+Q11 = E1/(1 - (nu12*nu21));
+Q22 = E2/(1 - (nu12*nu21));
+Q12 = (nu12*E2)/(1 - (nu12*nu21));
+Q66 = G12;
+
+T0_CB = (Q11 - (2*Q12) + (4*Q66) + Q22)/8.;
+T1_CB = (Q11 + (2*Q12) + Q12)/8.;
+R0_CB = (Q11 - (2*Q12) - (4*Q66) + Q22)/8.;
+R1_CB = (Q11 - Q22)/8.;
+
+T0 = T0_CB;
+T1 = T1_CB;
+LISTR1 = PROG 0 PAS (R1_CB/50.) R1_CB;
+LISTR12 = PROG;
+LISTRk = PROG;
+ListE0 = PROG;
+ListE1 = PROG;
+LISTR0 = PROG;
+REPE ii (dime(LISTR1));
+LISTR0 = LISTR0 et R0_CB;
+LISTR12 = LISTR12 et 0.;
+R1 = EXTR LISTR1 &ii;
+Rk = R0_CB*((2*((R1/R1_CB)**2)) - 1);
+LISTRk = LISTRk et Rk;
+
+*************** ANGLE-PLY ********************
+
+Q11_ap = T0_CB + (2*T1_CB) + Rk + (4*R1);
+Q22_ap = T0_CB + (2*T1_CB) + Rk - (4*R1);
+Q12_ap = (-1*T0_CB) + (2*T1_CB) - Rk;
+Q66_ap = T0_CB - Rk;
+
+Ex = ((Q11_ap*Q22_ap) - (Q12_ap**2))/Q22_ap;
+Ey = ((Q11_ap*Q22_ap) - (Q12_ap**2))/Q11_ap;
+Gxy = Q66_ap;
+nuxy = Q12_ap/Q22_ap;
+
+ma0 = MATE mo0 'DIRECTION' (1. 0. 0.) 'PARALLELE'
+'YG1' Ex 'YG2' Ey 'NU12' nuxy 'G12' Gxy 'EPAI' H;
+
+rig0 = RIGI mo0 ma0;
+Ktot = rig0 et cl0;
+
+res0 = RESO Ktot frc0;
+
+sig0 = SIGM res0 mo0 ma0;
+def0 = EPSI mo0 res0 ma0;
+ener0 = ENER mo0 sig0 def0;
+energie = INTG mo0 ener0 ma0;
+ListE0 = ListE0 et energie;
+
+*************** CROSS-PLY *********************
+Q11_cp = T0_CB + (2*T1_CB) + R0_CB + (4*R1);
+Q22_cp = T0_CB + (2*T1_CB) + R0_CB - (4*R1);
+Q12_cp = (-1*T0_CB) + (2*T1_CB) - R0_CB;
+Q66_cp = T0_CB - R0_CB;
+
+Ex = ((Q11_cp*Q22_cp) - (Q12_cp**2))/Q22_cp;
+Ey = ((Q11_cp*Q22_cp) - (Q12_cp**2))/Q11_cp;
+Gxy = Q66_cp;
+nuxy = Q12_cp/Q22_cp;
+
+ma0 = MATE mo0 'DIRECTION' (1. 0. 0.) 'PARALLELE'
+'YG1' Ex 'YG2' Ey 'NU12' nuxy 'G12' Gxy 'EPAI' H;
+
+rig0 = RIGI mo0 ma0;
+Ktot = rig0 et cl0;
+
+res1 = RESO Ktot frc0;
+
+sig1 = SIGM res1 mo0 ma0;
+def1 = EPSI mo0 res1 ma0;
+ener1 = ENER mo0 sig1 def1;
+energie = INTG mo0 ener1 ma0;
+ListE1 = ListE1 et energie;
+
+FIN ii;
+EvoAP = EVOL 'MANU' LISTRk LISTR1;
+EvoCP = EVOL 'MANU' LISTR0 LISTR1;
+EvoSC = EVOL 'MANU' LISTRk LISTR12;
+EvoE0 = EVOL 'MANU' LISTR1 ListE0;
+EvoE1 = EVOL 'MANU' LISTR1 ListE1;
+
+
+
+*************** SYMETRIE CARREE *********************
+LISTR12 = PROG;
+LISTRk = PROG (-1*R0_CB) PAS (R0_CB/50.) R0_CB;
+ListE2 = PROG;
+REPE ii (dime(LISTRk));
+Rk = EXTR LISTRk &ii;
+LISTR12 = LISTR12 et 0. ;
+Q11_sc = T0_CB + (2*T1_CB) + Rk;
+Q22_sc = T0_CB + (2*T1_CB) + Rk;
+Q12_sc = (-1*T0_CB) + (2*T1_CB) - Rk;
+Q66_sc = T0_CB - Rk;
+
+Ex = ((Q11_sc*Q22_sc) - (Q12_sc**2))/Q22_sc;
+Ey = ((Q11_sc*Q22_sc) - (Q12_sc**2))/Q11_sc;
+Gxy = Q66_sc;
+nuxy = Q12_sc/Q22_sc;
+
+ma0 = MATE mo0 'DIRECTION' (1. 0. 0.) 'PARALLELE'
+'YG1' Ex 'YG2' Ey 'NU12' nuxy 'G12' Gxy 'EPAI' H;
+
+rig2 = RIGI mo0 ma0;
+Ktot = rig2 et cl0;
+
+res2 = RESO Ktot frc0;
+
+sig2 = SIGM res2 mo0 ma0;
+def2 = EPSI mo0 res2 ma0;
+ener2 = ENER mo0 sig2 def2;
+energie = INTG mo0 ener2 ma0;
+ListE2 = ListE2 et energie;
+
+FIN ii;
+EvoE2 = EVOL 'MANU' LISTR12 ListE2;
+
+DESS ((EvoAP COUL JAUNE) et (EvoCP COUL ROUGE) et (EvoSC COUL BLEU));
+DESS ((EvoE0 COUL JAUNE) et (EvoE1 COUL ROUGE) et (EvoE2 COUL BLEU));
+
+
+
+

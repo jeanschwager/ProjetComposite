@@ -1,0 +1,508 @@
+*Titre : Projet composites
+
+OPTI DIME 3 ELEM TRI3 MODE TRID ;
+OPTI EPSI LINE;
+*OPTI TRAC OPEN;
+
+*Données geometriques
+c0=50.e-2;
+L0=c0;
+sw0=c0;
+c1=0.5*c0;
+
+N=16;
+t=0.1e-3;
+H=N*t;
+
+*Donnees materielles
+E1=181.e9;
+E2=10.3e9;
+G_12=7.17e9;
+nu_12=0.28;
+nu_21=(E2*nu_12)/E1;
+
+*Maillage
+p0=0. 0. 0.;
+p1=L0 sw0 0.;
+p2=L0 (sw0 + c1) 0.;
+p3=0. c0 0. ;
+
+l1= D 20 p0 p1;
+l2=D 20 p1 p2;
+l3=D 20 p2 p3;
+l4=D 20 p3 p0;
+
+
+ltot=(l1 et l2 et l3 et l4);
+oeuil1= (0. 0. 10.);
+*TRAC ltot oeuil1;
+
+
+s0=SURF ltot 'PLAN';
+
+*TRAC s0;
+
+v1=(1. 0. 0.);
+v2=(0. 1. 0.);
+v3=(0. 0. 1.);
+
+vcorde=(0.5  0.375  0.);
+
+ 
+Q11 = E1/(1 - (nu_12*nu_21)); 
+Q22 = E2/(1 - (nu_12*nu_21));
+Q66=G_12;
+Q16=0.;
+Q26=0.;
+Q12=(nu_12*E2)/(1 - ((E2/E1)*nu_12));
+
+MatQ=PROG Q11 Q12 Q16 Q22 Q26 Q66;
+
+T0_CB=(Q11 - (2*Q12) + (4*Q66) + Q22)/8.;
+T1_CB=(Q11 + (2*Q12) + Q22)/8.;
+R0_CB=(Q11 + Q22 - (2*Q12) - (4*Q66))/8.;
+R1_CB=(Q11 - Q22)/8.;
+
+
+R1prog=PROG 0. PAS ((R1_CB)/50.) R1_CB;
+
+Rk=2.*R0_CB*((R1prog/R1_CB)**2.) - R0_CB.; 
+
+Domaine=EVOL MANU Rk R1prog;
+
+*DESS Domaine;
+
+
+SClist=PROG;
+APlist=PROG;
+Cplist=PROG;
+T0*=T0_CB;
+T1*=T1_CB;
+*-------------------------------------------------------------
+*Isotrope
+*-------------------------------------------------------------
+R1_norm=0.;
+Rk_norm=0.;
+
+A11=T0_CB + (2*T1_CB) + Rk_norm + (4*R1_norm);
+A22=T0_CB + (2*T1_CB) + Rk_norm - (4*R1_norm);
+A12=((-1)*T0_CB) + (2*T1_CB) - Rk_norm;
+A66=T0_CB  - Rk_norm;
+A16=0.;
+A26=0.;
+
+Ex=A11;
+Ey=A22;
+Gxy=A66;
+nu_xy=A12/A22;
+
+*----- Definition du modele et du materiau -------*
+
+mo0 = MODE s0 MECANIQUE ELASTIQUE ORTHOTROPE 'DKT' ;
+mat0 = MATE mo0 'DIRECTION'  vcorde 'PARALLELE'
+YG1 Ex 'YG2' Ey NU12 nu_xy G12 Gxy 'EPAI' H;
+
+
+*generation du profil de pression
+xs0 = coor 1 s0 ;
+ys0 = coor 2 s0 ;
+* coordonnee y du bord d'attaque le long du span (fonction de x)
+ysmin = sw0 / l0 * xs0 ;
+* longueur de corde le long du span (fonction de x)
+cc0 = ((c1 - c0) / l0 * xs0) + (manu chpo s0 scal c0) ;
+* champ constant egal a 1
+one = manu chpo s0 scal 1. ;
+*profil aerodynamique de pression
+yref0 = (ys0 - ysmin) / cc0 ;
+pr0 = cc0 / c0 * (yref0 * ((one - yref0) ** 4)) ;
+frc0 = press coqu mo0 pr0 norm ;
+
+*TRAC frc0 s0;
+
+*Condition lim
+cl1=BLOQ DEPLA ROTA l4;
+
+*Assemblage
+*----------
+rig1 = RIGI mo0 mat0;
+rig1 = rig1 et cl1;
+
+*Resolution
+*----------
+res1= RESO rig1 frc0 ;
+*TRAC s0 res1 ;
+
+def0= DEFO s0 res1 0. VERT;
+def1= DEFO s0 res1 ROUGE;
+*TRAC (def0 et def1);
+
+
+*On calcule et trace les contraintes
+sigm0 = SIGM mo0 mat0 res1 ;
+*TRAC sigm0 mo0 mat0 s0;
+
+
+*Deformations
+eps0=EPSI mo0 mat0 res1;
+*TRAC eps0 mo0 mat0 s0;
+
+
+Ener1  =  ENER  mo0 sigm0 eps0;
+
+Rg0  =  INTG mo0 Ener1; 
+
+
+*opti donn 5;
+
+*-------------------------------------------------------------
+*Cross-Ply
+*-------------------------------------------------------------
+
+vexprog=PROG 1. 0.5;
+veyprog= PROG 0. 0.375;
+
+
+R1prog=PROG 0. PAS ((R1_CB)/50.) R1_CB;
+Rigprog1= PROG;
+Riprog2= PROG;
+
+kk=0;
+
+REPE blo2 2;
+kk=kk + 1;
+a= EXTR vexprog kk;
+b=EXTR veyprog kk;
+ii=0;
+REPE bloc1 (DIME R1prog);
+ii=ii + 1;
+R1_norm=EXTR R1prog ii;
+Rk_norm= R0_CB;
+
+A11=T0_CB + (2*T1_CB) + Rk_norm + (4*R1_norm);
+A22=T0_CB + (2*T1_CB) + Rk_norm - (4*R1_norm);
+A12=((-1)*T0_CB) + (2*T1_CB) - Rk_norm;
+A66=T0_CB  - Rk_norm;
+A16=0.;
+A26=0.;
+
+Ex=(A11*A22 - ((A12)**2))/A22;
+Ey=(A11*A22 - ((A12)**2))/A11;
+Gxy=A66;
+nu_xy=A12/A22;
+
+*----- Definition du modele et du materiau -------*
+
+mo0 = MODE s0 MECANIQUE ELASTIQUE ORTHOTROPE 'DKT' ;
+mat0 = MATE mo0 'DIRECTION'  (a b 0.) 'PARALLELE'
+YG1 Ex 'YG2' Ey NU12 nu_xy G12 Gxy 'EPAI' H;
+
+
+*generation du profil de pression
+xs0 = coor 1 s0 ;
+ys0 = coor 2 s0 ;
+* coordonnee y du bord d'attaque le long du span (fonction de x)
+ysmin = sw0 / l0 * xs0 ;
+* longueur de corde le long du span (fonction de x)
+cc0 = ((c1 - c0) / l0 * xs0) + (manu chpo s0 scal c0) ;
+* champ constant egal a 1
+one = manu chpo s0 scal 1. ;
+*profil aerodynamique de pression
+yref0 = (ys0 - ysmin) / cc0 ;
+pr0 = cc0 / c0 * (yref0 * ((one - yref0) ** 4)) ;
+frc0 = press coqu mo0 pr0 norm ;
+
+*TRAC frc0 s0;
+
+*Condition lim
+cl1=BLOQ DEPLA ROTA l4;
+
+*Assemblage
+*----------
+rig1 = RIGI mo0 mat0;
+rig1 = rig1 et cl1;
+
+*Resolution
+*----------
+res1= RESO rig1 frc0 ;
+*TRAC s0 res1 ;
+
+def0= DEFO s0 res1 0. VERT;
+def1= DEFO s0 res1 ROUGE;
+*TRAC (def0 et def1);
+
+
+*On calcule et trace les contraintes
+sigm0 = SIGM mo0 mat0 res1 ;
+*TRAC sigm0 mo0 mat0 s0;
+
+
+*Deformations
+eps0=EPSI mo0 mat0 res1;
+*TRAC eps0 mo0 mat0 s0;
+
+
+Ener1  =  ENER  mo0 sigm0 eps0;
+
+Rg0  =  0.5*(INTG mo0 Ener1); 
+
+SI (kk EGA 1);
+Rigprog1=Rigprog1 et Rg0;
+FINSI;
+
+SI (kk EGA 2);
+Riprog2=Riprog2 et Rg0;
+FINSI;
+
+aoptiCP='ACOS' (R1_norm/R1_CB);
+alpCP=0.5*aoptiCP;
+
+CPlist=Cplist et alpCP;
+
+Fin bloc1;
+Fin blo2;
+
+*opti donn 5;
+
+evolr1=EVOL VERT MANU R1prog Rigprog1 ;
+evolr2=EVOL ROUGE MANU R1prog Riprog2 ;
+DESS (evolr1 et evolr2)'GRIL' ;
+
+
+
+
+
+
+*--------------------------------------------------------------
+*Angle-Ply
+*--------------------------------------------------------------
+R1prog=PROG 0. PAS ((R1_CB)/50.) R1_CB;
+Rigprog1= PROG;
+Riprog2= PROG;
+
+
+
+vexprog=PROG 1. 0.5;
+veyprog= PROG 0. 0.375;
+
+
+kk=0;
+
+REPE blo2 2;
+kk=kk + 1;
+a= EXTR vexprog kk;
+b=EXTR veyprog kk;
+ii=0;
+REPE bloc1 (DIME R1prog);
+ii=ii + 1;
+R1_norm=EXTR R1prog ii;
+Rk_norm=2.*R0_CB*((R1_norm/R1_CB)**2.) - R0_CB.;  ;
+
+A11=T0_CB + (2*T1_CB) + Rk_norm + (4*R1_norm);
+A22=T0_CB + (2*T1_CB) + Rk_norm - (4*R1_norm);
+A12=((-1)*T0_CB) + (2*T1_CB) - Rk_norm;
+A66=T0_CB  - Rk_norm;
+A16=0.;
+A26=0.;
+
+Ex=(A11*A22 - ((A12)**2))/A22;
+Ey=(A11*A22 - ((A12)**2))/A11;
+Gxy=A66;
+nu_xy=A12/A22;
+
+*----- Definition du modele et du materiau -------*
+
+mo0 = MODE s0 MECANIQUE ELASTIQUE ORTHOTROPE 'DKT' ;
+mat0 = MATE mo0 'DIRECTION'  (a b 0.) 'PARALLELE'
+YG1 Ex 'YG2' Ey NU12 nu_xy G12 Gxy 'EPAI' H;
+
+
+*generation du profil de pression
+xs0 = coor 1 s0 ;
+ys0 = coor 2 s0 ;
+* coordonnee y du bord d'attaque le long du span (fonction de x)
+ysmin = sw0 / l0 * xs0 ;
+* longueur de corde le long du span (fonction de x)
+cc0 = ((c1 - c0) / l0 * xs0) + (manu chpo s0 scal c0) ;
+* champ constant egal a 1
+one = manu chpo s0 scal 1. ;
+*profil aerodynamique de pression
+yref0 = (ys0 - ysmin) / cc0 ;
+pr0 = cc0 / c0 * (yref0 * ((one - yref0) ** 4)) ;
+frc0 = press coqu mo0 pr0 norm ;
+
+*TRAC frc0 s0;
+
+*Condition lim
+cl1=BLOQ DEPLA ROTA l4;
+
+*Assemblage
+*----------
+rig1 = RIGI mo0 mat0;
+rig1 = rig1 et cl1;
+
+*Resolution
+*----------
+res1= RESO rig1 frc0 ;
+*TRAC s0 res1 ;
+
+def0= DEFO s0 res1 0. VERT;
+def1= DEFO s0 res1 ROUGE;
+*TRAC (def0 et def1);
+
+
+*On calcule et trace les contraintes
+sigm0 = SIGM mo0 mat0 res1 ;
+*TRAC sigm0 mo0 mat0 s0;
+
+
+*Deformations
+eps0=EPSI mo0 mat0 res1;
+*TRAC eps0 mo0 mat0 s0;
+
+
+Ener1  =  ENER  mo0 sigm0 eps0;
+
+Rg0  =0.5*(INTG mo0 Ener1); 
+
+SI (kk EGA 1);
+Rigprog1=Rigprog1 et Rg0;
+FINSI;
+
+SI (kk EGA 2);
+Riprog2=Riprog2 et Rg0;
+FINSI;
+
+aoptiAP='ACOS' (R1_norm/R1_CB);
+alpAP=0.5*aoptiAP;
+APlist=Aplist et alpAP;
+Fin bloc1;
+Fin blo2;
+
+evolr1=EVOL VERT MANU R1prog Rigprog1 ;
+evolr2=EVOL ROUGE MANU R1prog Riprog2 ;
+DESS (evolr1 et evolr2)'GRIL';
+
+evolang=EVOL MANU APlist Rigprog1;
+list evolang;
+opti donn 5;
+
+
+
+
+
+
+
+*--------------------------------------------------------------
+*Sym-carré
+*--------------------------------------------------------------
+Rkprog=PROG ((-1)*R0_CB) PAS ((R0_CB/50.)) R0_CB;
+Rigprog1= PROG;
+Riprog2= PROG;
+
+
+
+vexprog=PROG 1. 0.5;
+veyprog= PROG 0. 0.375;
+
+
+kk=0;
+
+REPE blo2 2;
+kk=kk + 1;
+a= EXTR vexprog kk;
+b=EXTR veyprog kk;
+ii=0;
+
+
+REPE bloc1 (DIME Rkprog);
+ii=ii + 1;
+Rk_norm=EXTR Rkprog ii;
+R1_norm=0.;
+
+A11=T0_CB + (2*T1_CB) + Rk_norm + (4*R1_norm);
+A22=T0_CB + (2*T1_CB) + Rk_norm - (4*R1_norm);
+A12=((-1)*T0_CB) + (2*T1_CB) - Rk_norm;
+A66=T0_CB  - Rk_norm;
+A16=0.;
+A26=0.;
+
+Ex=(A11*A22 - ((A12)**2))/A22;
+Ey=(A11*A22 - ((A12)**2))/A11;
+Gxy=A66;
+nu_xy=A12/A22;
+
+*----- Definition du modele et du materiau -------*
+
+mo0 = MODE s0 MECANIQUE ELASTIQUE ORTHOTROPE 'DKT' ;
+mat0 = MATE mo0 'DIRECTION'  (a b 0.) 'PARALLELE'
+YG1 Ex 'YG2' Ey NU12 nu_xy G12 Gxy 'EPAI' H;
+
+
+*generation du profil de pression
+xs0 = coor 1 s0 ;
+ys0 = coor 2 s0 ;
+* coordonnee y du bord d'attaque le long du span (fonction de x)
+ysmin = sw0 / l0 * xs0 ;
+* longueur de corde le long du span (fonction de x)
+cc0 = ((c1 - c0) / l0 * xs0) + (manu chpo s0 scal c0) ;
+* champ constant egal a 1
+one = manu chpo s0 scal 1. ;
+*profil aerodynamique de pression
+yref0 = (ys0 - ysmin) / cc0 ;
+pr0 = cc0 / c0 * (yref0 * ((one - yref0) ** 4)) ;
+frc0 = press coqu mo0 pr0 norm ;
+
+*TRAC frc0 s0;
+
+*Condition lim
+cl1=BLOQ DEPLA ROTA l4;
+
+*Assemblage
+*----------
+rig1 = RIGI mo0 mat0;
+rig1 = rig1 et cl1;
+
+*Resolution
+*----------
+res1= RESO rig1 frc0 ;
+*TRAC s0 res1 ;
+
+def0= DEFO s0 res1 0. VERT;
+def1= DEFO s0 res1 ROUGE;
+*TRAC (def0 et def1);
+
+
+*On calcule et trace les contraintes
+sigm0 = SIGM mo0 mat0 res1 ;
+*TRAC sigm0 mo0 mat0 s0;
+
+
+*Deformations
+eps0=EPSI mo0 mat0 res1;
+*TRAC eps0 mo0 mat0 s0;
+
+
+Ener1  =  ENER  mo0 sigm0 eps0;
+
+Rg0  =  0.5*(INTG mo0 Ener1); 
+
+SI (kk EGA 1);
+Rigprog1=Rigprog1 et Rg0;
+FINSI;
+
+SI (kk EGA 2);
+Riprog2=Riprog2 et Rg0;
+FINSI;
+
+
+aoptiSC='ACOS' (R1_norm/R1_CB);
+alpSC=0.5*aoptiSC;
+SClist=SClist et alpSC;
+Fin bloc1;
+Fin blo2;
+R1prog=PROG (DIME Rigprog1)*0.;
+evolr1=EVOL VERT MANU R1prog Rigprog1 ;
+evolr2=EVOL ROUGE MANU R1prog Riprog2 ;
+DESS (evolr1 et evolr2)'GRIL';
+
+

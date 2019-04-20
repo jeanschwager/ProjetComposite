@@ -1,0 +1,257 @@
+***********************************************************
+**** Optimisation d'une aile delta en composite ***********
+*********************************************;*************
+ 
+* options 
+OPTI DIME 3 MODE TRID ELEM TRI3; 
+OPTI EPSI LINEAIRE;
+
+* Géometrie aile delta en composite
+DENS 0.05;
+  
+* Données géomètriques
+l0 = 50.e-2;
+c0 = 50.e-2;
+c1 = 0.5*c0;
+sw0 = 50.e-2; 
+
+* Maillage
+
+p1 = 0. 0. 0.;
+p2 = l0 sw0 0.;
+p3 = l0 (sw0+c1) 0.;
+p4 = 0. c0 0.;
+
+L1 = DROI p1 p2;
+L2 = DROI p2 p3;
+L3 = DROI p3 p4;
+L4 = DROI p4 p1;
+
+s0 = L1 et L2 et L3 et L4;
+s0 = SURF s0 PLAN; 
+
+* Materiau
+
+t = 0.1e-3;
+n = 16;
+H = n*t;
+E1 = 181e9;
+E2 = 10.3e9;
+G12 = 7.17e9;
+nu12 = 0.28;
+*rep = 1. 0. 0.;
+rep = l0 (sw0-(c0/2)+(c1/2)) 0.;
+
+
+
+* Definition modèle et materiau 
+********* 'DIRECTIONT' ou 'RADIAL'
+
+mo0 = MODE s0 'MECANIQUE' 'ELASTIQUE' 'ORTHOTROPE' 'DKT';
+
+
+* Chargement
+* generation du profil de pression
+xs0 = coor 1 s0 ;
+ys0 = coor 2 s0 ;
+* coordonnee y du bord d'attaque le long du span (fonction de x)
+ysmin = sw0 / l0 * xs0 ;
+* longueur de corde le long du span (fonction de x)
+cc0 = (((c1 - c0) / l0) * xs0) + (manu chpo s0 scal c0) ;
+* champ constant egal a 1
+one = manu chpo s0 scal 1. ;
+* profil aerodynamique de pression
+yref0 = (ys0 - ysmin) / cc0 ;
+pr0 = cc0 / c0 * (yref0 * ((one - yref0) ** 4)) ;
+frc0 = press coqu mo0 pr0 norm ;
+ 
+************************************************************************
+* MATRICES
+************************************************************************
+ 
+* Conditions aux limites
+cl0 = BLOQ 'DEPL' 'ROTA' L4; 
+
+******************** Couche de Base *******************
+* Relation de reciprocite
+nu21 = nu12*(E2/E1);
+Q11 = E1/(1 - (nu12*nu21));
+Q22 = E2/(1 - (nu12*nu21));
+Q12 = (E2*nu12)/(1 - (nu12*nu21));
+Q66 = G12;
+* Module polaire de la couche de base
+R0_CB = (Q11 + (-2*Q12) + (-4*Q66) + Q22)/8;
+R1_CB = (Q11 - Q22)/8; 
+T0_CB = (Q11 + (-2*Q12) + (4*Q66) + Q22)/8;
+T1_CB = (Q11 + (2*Q12) + Q22)/8;
+
+
+*************************Angle- Ply *******************
+R1_AP = PROG 0 PAS (R1_CB/50) R1_CB;
+RK_AP = PROG;
+EnergyAP = PROG;
+
+REPE ii (DIME R1_AP);
+
+*********** RK ************
+R1_AP_i = EXTR R1_AP &ii;
+RK_AP2 = R0_CB*((2*((R1_AP_i/R1_CB)**2)) - 1);
+RK_AP = RK_AP et RK_AP2;
+
+Q11ap = T0_CB + (2*T1_CB) + RK_AP2 + (4*R1_AP_i);
+Q22ap = T0_CB + (2*T1_CB) + RK_AP2 - (4*R1_AP_i);
+Q12ap = ((-1)*T0_CB) + (2*T1_CB) - RK_AP2;
+Q66ap = T0_CB - RK_AP2;
+
+Ex = ((Q11ap*Q22ap) - (Q12ap**2))/Q22ap;
+Ey = ((Q11ap*Q22ap) - (Q12ap**2))/Q11ap;
+Gxy = Q66ap;
+nuxy = Q12ap/Q22ap;
+
+* Mate
+matAP = MATE mo0 'DIRECTION' rep 'PARALLELE' 'YG1' Ex 
+'YG2' Ey 'NU12' nuxy 'G12' Gxy 'EPAI' H;
+* Rigidite
+KrigiAP  = RIGI mo0 matAP;
+KtotAP = KrigiAP et cl0;
+*Post traitement
+UsolAP = RESO KtotAP frc0;
+*Calcul de energie
+sig_AP = SIGM mo0 matAP UsolAP;
+def_AP = EPSI mo0 UsolAP matAP;
+Ener_AP = ENER mo0 sig_AP def_AP;
+Ener_AP = INTG mo0 Ener_AP matAP;
+EnergyAP = EnergyAP et Ener_AP;
+
+FIN ii;
+
+LIST(MINI(EnergyAP));
+
+*E_AP_EV = EVOL MANU EnergyAP R1_AP;
+*DESS E_AP_EV;
+EVOL1 = EVOL 'VERT' MANU 'RK' RK_AP 'R1' R1_AP;
+EVOL4 = EVOL 'VERT' MANU R1_AP EnergyAP;
+EVOL7 = EVOL 'VERT' MANU RK_AP EnergyAP;
+***************** Cross-Ply****************************************
+
+R1_CP = PROG 0 PAS (R1_CB/50) R1_CB;
+RK_CP = PROG;
+EnergyCP = PROG;
+
+REPE ii (DIME R1_AP);
+
+*********** RK ************
+R1_CP_i = EXTR R1_AP &ii;
+RK_CP2 = R0_CB;
+RK_CP = RK_CP et RK_CP2;
+
+Q11cp = T0_CB + (2*T1_CB) + RK_CP2 + (4*R1_CP_i);
+Q22cp = T0_CB + (2*T1_CB) + RK_CP2 - (4*R1_CP_i);
+Q12cp = ((-1)*T0_CB) + (2*T1_CB) - RK_CP2;
+Q66cp = T0_CB - RK_CP2;
+
+Ex = ((Q11cp*Q22cp) - (Q12cp**2))/Q22cp;
+Ey = ((Q11cp*Q22cp) - (Q12cp**2))/Q11cp;
+Gxy = Q66cp;
+nuxy = Q12cp/Q22cp;
+
+*Mate
+matCP = MATE mo0 'DIRECTION' rep 'PARALLELE' 'YG1' Ex 
+'YG2' Ey 'NU12' nuxy 'G12' Gxy 'EPAI' H;
+* Rigidite
+KrigiCP  = RIGI mo0 matCP;
+KtotCP = KrigiCP et cl0;
+*Post traitement
+UsolCP = RESO KtotCP frc0;
+*Calcul de energie
+sig_CP = SIGM mo0 matCP UsolCP;
+def_CP = EPSI mo0 UsolCP matCP;
+Ener_CP = ENER mo0 sig_CP def_CP;
+Ener_CP = INTG mo0 Ener_CP matCP;
+EnergyCP = EnergyCP et Ener_CP;
+
+FIN ii;
+
+LIST(MINI(EnergyCP));
+
+*E_CP_EV = EVOL MANU EnergyCP R1_CP;
+*DESS E_CP_EV;
+EVOL2 = EVOL 'ROUG' MANU 'RK' RK_CP 'R1' R1_AP;
+EVOL5 = EVOL 'ROUG' MANU R1_CP EnergyCP;
+EVOL8 = EVOL 'ROUG' MANU RK_CP EnergyCP;
+*************************** Symétrie Carré ************************
+
+R1_SC = PROG;
+RK_SC = PROG ((-1)*R0_CB) PAS (R0_CB/100) R0_CB;;
+EnergySC = PROG;
+
+REPE ii (DIME RK_SC);
+
+*********** RK ************
+R0_SC_i = EXTR RK_SC &ii;
+RK_SC2 = R0_SC_i;
+R1_SC2 = 0;
+R1_SC = R1_SC et R1_SC2;
+
+Q11sc = T0_CB + (2*T1_CB) + RK_SC2 + (4*R1_SC2);
+Q22sc = T0_CB + (2*T1_CB) + RK_SC2 - (4*R1_SC2);
+Q12sc = ((-1)*T0_CB) + (2*T1_CB) - RK_SC2;
+Q66sc = T0_CB - RK_SC2;
+
+Ex = ((Q11sc*Q22sc) - (Q12sc**2))/Q22sc;
+Ey = ((Q11sc*Q22sc) - (Q12sc**2))/Q11sc;
+Gxy = Q66sc;
+nuxy = Q12sc/Q22sc;
+
+*Mate
+matSC = MATE mo0 'DIRECTION' rep 'PARALLELE' 'YG1' Ex 
+'YG2' Ey 'NU12' nuxy 'G12' Gxy 'EPAI' H;
+* Rigidite
+KrigiSC  = RIGI mo0 matSC;
+KtotSC = KrigiSC et cl0;
+*Post traitement
+UsolSC = RESO KtotSC frc0;
+*Calcul de energie
+sig_SC = SIGM mo0 matSC UsolSC;
+def_SC = EPSI mo0 UsolSC matSC;
+Ener_SC = ENER mo0 sig_SC def_SC;
+Ener_SC = INTG mo0 Ener_SC matSC;
+EnergySC = EnergySC et Ener_SC;
+
+FIN ii;
+
+LIST(MINI(EnergySC));
+EVOL3 = EVOL 'BLEU' MANU 'RK' RK_SC 'R1' R1_SC;
+EVOL6 = EVOL 'BLEU' MANU EnergySC R1_SC;
+EVOL9 = EVOL 'BLEU' MANU RK_SC EnergySC;
+************************************************************************
+* Graphes : Energy(R1) et RK(R1)
+************************************************************************
+
+E_AP_EV = EVOL 'BLEU' MANU R1_AP EnergyAP;
+E_CP_EV = EVOL 'ROUGE' MANU R1_CP EnergyCP;
+E_SC_EV = EVOL 'VERT' MANU R1_SC EnergySC;
+*DESS (E_AP_EV ET E_CP_EV ET E_SC_EV);
+
+E1_AP_EV = EVOL 'BLEU' MANU RK_AP 'LEGE' 'Angle-Ply' R1_AP;
+E1_CP_EV = EVOL 'ROUGE' MANU RK_CP 'LEGE' 'Cross-Ply' R1_CP;
+E1_SC_EV = EVOL 'VERT' MANU RK_SC 'LEGE' 'Symetrie-Carre' R1_SC;
+*DESS (E1_AP_EV ET E1_CP_EV ET E1_SC_EV) 
+'TITR' 'DOMAINE RK-R1'
+'TITX' 'RK'
+'TITY' 'R1';
+
+************************************************************************
+* Alpha Optimal
+************************************************************************
+
+LIST(MINI(EnergyAP));
+LIST(MINI(EnergyCP));
+LIST(MINI(EnergySC));
+
+R1_opt = 1.58605E+10;
+alp_opt = ACOS(R1_opt/R1_CB);
+alp_opt = alp_opt*0.5;
+list alp_opt;
+
+
