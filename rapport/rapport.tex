@@ -126,7 +126,27 @@ Afin de résoudre ce problème on va utiliser le logiciel de calcul par élémen
 \subsection{Maillage}
 L'aile est modélisé en 2 dimensions mais l'espace de sera bien en 3 dimensions. le maillage est constitué d'élément triangulaire à trois nœuds de type plaque mince de Kirschoff (DKT dans Cast3m). le nombre d'éléments du maillage doit être suffisant afin d'avoir un calcul convergé.
 \subsection{Chargement}
+En vol à une vitesse constante U, l’aile est sollicitée par un écoulement dirigé selon l’axe y (voir Figure 1). Il résulte de cet écoulement un champs de pression sur la surface de l'aile. On utilise l'approximation suivante pour modéliser ce champs de pression :
+\begin{equation}
+p_0=\left(1-\frac{c_0-c_1}{c_0}\frac{x}{L}\right)(y-y_{min})(y-y_{min})^4
+\end{equation}
+On prduit ce champs de pression dans castem à l'aide du code fournis dans le sujet du projet. On visualise ce champs de pression :
+\begin{figure}[h]
+\includegraphics[scale=0.5]{images/champspression.png}\centering
+\caption{Profil de pression selon z sur l'aile}
+\end{figure}
 \subsection{Matériau}
+Le materiau est modélisé selon trois dispositions de couches différentes :
+\begin{itemize}
+\item Angle-Ply
+\item Cross-Ply
+\item Symétrie du carré
+\end{itemize}
+Ces trois dispositions correspondent à des orientations de couches différentes. De plus on étudie deux direction d'orthotropie : 
+\begin{itemize}
+\item selon le vecteur x (1,0,0)
+\item Selon la ligne de mi-corde (voir figure ?)
+\end{itemize}
 \section{Homogénéisation}
 \section{Analyse et optimisation}
 \section{Conclusion}

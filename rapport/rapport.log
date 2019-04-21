@@ -1,11 +1,11 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7000 64-bit) (preloaded format=pdflatex 2019.4.20)  20 APR 2019 15:30
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7000 64-bit) (preloaded format=pdflatex 2019.4.20)  21 APR 2019 21:11
 entering extended mode
 **./rapport.tex
 (rapport.tex
 LaTeX2e <2018-12-01>
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\article.cls"
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\article.cls"
 Document Class: article 2018/09/03 v1.4i Standard LaTeX document class
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\size12.clo"
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\size12.clo"
 File: size12.clo 2018/09/03 v1.4i Standard LaTeX file (size option)
 )
 \c@part=\count80
@@ -19,41 +19,41 @@ File: size12.clo 2018/09/03 v1.4i Standard LaTeX file (size option)
 \abovecaptionskip=\skip41
 \belowcaptionskip=\skip42
 \bibindent=\dimen102
-) ("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\inputenc.st
+) ("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\inputenc.st
 y"
 Package: inputenc 2018/08/11 v1.3c Input encoding file
 \inpenc@prehook=\toks14
 \inpenc@posthook=\toks15
-) ("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\fontenc.sty
+) ("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\fontenc.sty
 "
 Package: fontenc 2018/08/11 v2.0j Standard LaTeX package
- ("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\t1enc.def"
+ ("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\t1enc.def"
 File: t1enc.def 2018/08/11 v2.0j Standard LaTeX file
 LaTeX Font Info:    Redeclaring font encoding T1 on input line 48.
 ))
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsmath\amsmath.st
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsmath\amsmath.st
 y"
 Package: amsmath 2018/12/01 v2.17b AMS math features
 \@mathmargin=\skip43
 
 For additional information on amsmath, use the `?' option.
 
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsmath\amstext.st
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsmath\amstext.st
 y"
 Package: amstext 2000/06/29 v2.01 AMS text
 
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsmath\amsgen.sty
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsmath\amsgen.sty
 "
 File: amsgen.sty 1999/11/30 v2.0 generic functions
 \@emptytoks=\toks16
 \ex@=\dimen103
 ))
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsmath\amsbsy.sty
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsmath\amsbsy.sty
 "
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
 \pmbraise@=\dimen104
 )
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsmath\amsopn.sty
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsmath\amsopn.sty
 "
 Package: amsopn 2016/03/08 v2.02 operator names
 )
@@ -95,7 +95,7 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 730.
 LaTeX Info: Redefining \[ on input line 2844.
 LaTeX Info: Redefining \] on input line 2845.
 )
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\amsfonts.
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\amsfonts.
 sty"
 Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
 \symAMSa=\mathgroup4
@@ -103,53 +103,53 @@ Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
 )
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\amssymb.s
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\amssymb.s
 ty"
 Package: amssymb 2013/01/14 v3.01 AMS font symbols
 )
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\graphicx.
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\graphicx.
 sty"
 Package: graphicx 2017/06/01 v1.1a Enhanced LaTeX Graphics (DPC,SPQR)
 
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\keyval.st
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\keyval.st
 y"
 Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
 \KV@toks@=\toks21
 )
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\graphics.
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\graphics.
 sty"
 Package: graphics 2017/06/25 v1.2c Standard LaTeX Graphics (DPC,SPQR)
 
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\trig.sty"
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\trig.sty"
 Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
 )
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics-cfg\graph
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics-cfg\graph
 ics.cfg"
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 99.
 
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics-def\pdfte
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics-def\pdfte
 x.def"
 File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
 ))
 \Gin@req@height=\dimen112
 \Gin@req@width=\dimen113
 )
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/geometry\geometry.
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/geometry\geometry.
 sty"
 Package: geometry 2018/04/16 v5.8 Page Geometry
 
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/generic/oberdiek\ifpdf.s
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/generic/oberdiek\ifpdf.s
 ty"
 Package: ifpdf 2018/09/07 v3.3 Provides the ifpdf switch
 )
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/generic/oberdiek\ifvtex.
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/generic/oberdiek\ifvtex.
 sty"
 Package: ifvtex 2016/05/16 v1.6 Detect VTeX and its facilities (HO)
 Package ifvtex Info: VTeX not detected.
 )
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/generic/ifxetex\ifxetex.
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/generic/ifxetex\ifxetex.
 sty"
 Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
 )
@@ -166,31 +166,31 @@ Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
 \Gm@layoutvoffset=\dimen121
 \Gm@dimlist=\toks22
 
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/geometry\geometry.
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/geometry\geometry.
 cfg"))
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/generic/babel\babel.sty"
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/generic/babel\babel.sty"
 Package: babel 2019/04/01 3.28 The Babel package
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/generic/babel\switch.def
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/generic/babel\switch.def
 "
 File: switch.def 2019/04/01 3.28 Babel switching mechanism
 )
 *************************************
 * Local config file bblopts.cfg used
 *
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/arabi\bblopts.cfg"
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/arabi\bblopts.cfg"
 File: bblopts.cfg 2005/09/08 v0.1 add Arabic and Farsi to "declared" options of
  babel
 )
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/babel-english\engl
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/babel-english\engl
 ish.ldf"
 Language: english 2017/06/06 v3.3r English support from the babel system
 
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/generic/babel\babel.def"
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/generic/babel\babel.def"
 File: babel.def 2019/04/01 3.28 Babel common definitions
 \babel@savecnt=\count103
 \U@D=\dimen122
 
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/generic/babel\txtbabel.d
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/generic/babel\txtbabel.d
 ef")
 \bbl@dirlevel=\count104
 )
@@ -198,7 +198,7 @@ ef")
 \l@australian = a dialect from \language\l@british 
 \l@newzealand = a dialect from \language\l@british 
 ))
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/vmargin\vmargin.st
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/vmargin\vmargin.st
 y"
 Package: vmargin 2004/07/15 V2.5 set document margins (VK)
 
@@ -206,7 +206,7 @@ Package: vmargin 2004/07/15 V2.5 set document margins (VK)
 \PaperWidth=\dimen123
 \PaperHeight=\dimen124
 )
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/enumitem\enumitem.
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/enumitem\enumitem.
 sty"
 Package: enumitem 2019/02/04 v3.8 Customized lists
 \labelindent=\skip46
@@ -216,7 +216,7 @@ Package: enumitem 2019/02/04 v3.8 Customized lists
 \enit@count@id=\count105
 \enitdp@description=\count106
 )
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/wrapfig\wrapfig.st
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/wrapfig\wrapfig.st
 y"
 \wrapoverhang=\dimen126
 \WF@size=\dimen127
@@ -225,22 +225,22 @@ y"
 \WF@everypar=\toks24
 Package: wrapfig 2003/01/31  v 3.6
 )
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/endnotes\endnotes.
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/endnotes\endnotes.
 sty"
 \c@endnote=\count108
 \endnotesep=\dimen128
 \@enotes=\write3
 )
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/hyperref\hyperref.
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/hyperref\hyperref.
 sty"
 Package: hyperref 2018/11/30 v6.88e Hypertext links for LaTeX
 
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/generic/oberdiek\hobsub-
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/generic/oberdiek\hobsub-
 hyperref.sty"
 Package: hobsub-hyperref 2016/05/16 v1.14 Bundle oberdiek, subset hyperref (HO)
 
 
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/generic/oberdiek\hobsub-
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/generic/oberdiek\hobsub-
 generic.sty"
 Package: hobsub-generic 2016/05/16 v1.14 Bundle oberdiek, subset generic (HO)
 Package: hobsub 2016/05/16 v1.14 Construct package bundles (HO)
@@ -276,11 +276,11 @@ Package: atbegshi 2016/06/09 v1.18 At begin shipout hook (HO)
 Package: refcount 2016/05/16 v3.5 Data extraction from label references (HO)
 Package: hycolor 2016/05/16 v1.8 Color options for hyperref/bookmark (HO)
 )
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/oberdiek\auxhook.s
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/oberdiek\auxhook.s
 ty"
 Package: auxhook 2016/05/16 v1.4 Hooks for auxiliary files (HO)
 )
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/oberdiek\kvoptions
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/oberdiek\kvoptions
 .sty"
 Package: kvoptions 2016/05/16 v3.12 Key value format for package options (HO)
 )
@@ -288,7 +288,7 @@ Package: kvoptions 2016/05/16 v3.12 Key value format for package options (HO)
 \Hy@linkcounter=\count109
 \Hy@pagecounter=\count110
 
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/hyperref\pd1enc.de
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/hyperref\pd1enc.de
 f"
 File: pd1enc.def 2018/11/30 v6.88e Hyperref: PDFDocEncoding definition (HO)
 Now handling font encoding PD1 ...
@@ -296,7 +296,7 @@ Now handling font encoding PD1 ...
 )
 \Hy@SavedSpaceFactor=\count111
 
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/00miktex\hyperref.
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/00miktex\hyperref.
 cfg"
 File: hyperref.cfg 2002/06/06 v1.2 hyperref configuration of TeXLive
 )
@@ -308,7 +308,7 @@ Package hyperref Info: Backreferencing OFF on input line 4539.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4772.
 \c@Hy@tempcnt=\count112
- ("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/url\url.sty"
+ ("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/url\url.sty"
 \Urlmuskip=\muskip11
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
@@ -332,13 +332,13 @@ LaTeX Info: Redefining \pageref on input line 6454.
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
 
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/hyperref\hpdftex.d
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/hyperref\hpdftex.d
 ef"
 File: hpdftex.def 2018/11/30 v6.88e Hyperref driver for pdfTeX
 \Fld@listcount=\count117
 \c@bookmark@seq@number=\count118
 
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/oberdiek\rerunfile
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/oberdiek\rerunfile
 check.sty"
 Package: rerunfilecheck 2016/05/16 v1.8 Rerun checks for auxiliary files (HO)
 Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
@@ -346,7 +346,7 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip47
 )
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/tools\array.sty"
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/tools\array.sty"
 Package: array 2018/12/30 v2.4k Tabular extension package (FMi)
 \col@sep=\dimen133
 \ar@mcellbox=\box31
@@ -356,7 +356,7 @@ Package: array 2018/12/30 v2.4k Tabular extension package (FMi)
 \backup@length=\skip49
 \ar@cellbox=\box32
 )
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/multirow\multirow.
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/multirow\multirow.
 sty"
 Package: multirow 2019/01/01 v2.4 Span multiple rows of a table
 \multirow@colwidth=\skip50
@@ -364,14 +364,14 @@ Package: multirow 2019/01/01 v2.4 Span multiple rows of a table
 \multirow@dima=\skip51
 \bigstrutjot=\dimen135
 )
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/makecell\makecell.
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/makecell\makecell.
 sty"
 Package: makecell 2009/08/03 V0.1e Managing of Tab Column Heads and Cells
 \rotheadsize=\dimen136
 \c@nlinenum=\count120
 \TeXr@lab=\toks26
 )
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\lscape.st
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\lscape.st
 y"
 Package: lscape 2000/10/22 v3.01 Landscape Pages (DPC)
 ) (rapport.aux)
@@ -392,7 +392,7 @@ LaTeX Font Info:    ... okay on input line 19.
 LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 19.
 LaTeX Font Info:    ... okay on input line 19.
 
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/context/base/mkii\supp-p
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/context/base/mkii\supp-p
 df.mkii"
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count121
@@ -407,11 +407,11 @@ df.mkii"
 \makeMPintoPDFobject=\count126
 \everyMPtoPDFconversion=\toks28
 )
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/oberdiek\epstopdf-
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/oberdiek\epstopdf-
 base.sty"
 Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
 
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/oberdiek\grfext.st
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/oberdiek\grfext.st
 y"
 Package: grfext 2016/05/16 v1.2 Manage graphics extensions (HO)
 )
@@ -459,11 +459,11 @@ G,.JBIG2,.JB2,.eps]
 \AtBeginShipoutBox=\box34
 Package hyperref Info: Link coloring OFF on input line 19.
 
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/hyperref\nameref.s
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/hyperref\nameref.s
 ty"
 Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
 
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/generic/oberdiek\gettitl
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/generic/oberdiek\gettitl
 estring.sty"
 Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 )
@@ -488,15 +488,15 @@ Package pdftex.def Info: images/spi.jpg  used on input line 56.
 (pdftex.def)             Requested size: 105.16197pt x 89.39073pt.
 LaTeX Font Info:    Try loading font information for U+msa on input line 59.
 
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\umsa.fd"
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\umsa.fd"
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
 LaTeX Font Info:    Try loading font information for U+msb on input line 59.
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\umsb.fd"
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\umsb.fd"
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
-{C:/Users/jschw/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map} <./images/so
+{C:/Users/jeans/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map} <./images/so
 rbonne.png> <./images/spi.jpg>] (rapport.toc)
 \tf@toc=\write5
 \openout5 = `rapport.toc'.
@@ -510,7 +510,7 @@ l.95 \newpage
 LaTeX Font Info:    Try loading font information for OMS+cmr on input line 105.
 
 
-("C:\Users\jschw\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\omscmr.fd"
+("C:\Users\jeans\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\omscmr.fd"
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
@@ -522,39 +522,51 @@ Package pdftex.def Info: images/geometrie.jpg  used on input line 111.
 (pdftex.def)             Requested size: 323.41075pt x 159.44691pt.
 
 [2 <./images/geometrie.jpg>]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 133.
- [3]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 133.
+<images/champspression.png, id=88, 569.12625pt x 373.89688pt>
+File: images/champspression.png Graphic file (type png)
+<use images/champspression.png>
+Package pdftex.def Info: images/champspression.png  used on input line 135.
+(pdftex.def)             Requested size: 284.56242pt x 186.94798pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[3]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 153.
+ [4 <./images/champspression.png>]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 153.
  (rapport.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 133.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 133.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 153.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 153.
 Package rerunfilecheck Info: File `rapport.out' has not changed.
 (rerunfilecheck)             Checksum: BC07397ADFF068E83E863AB925E24DC3;662.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 133.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 153.
  ) 
 Here is how much of TeX's memory you used:
- 7900 strings out of 492945
- 114589 string characters out of 3126252
- 220527 words of memory out of 3000000
- 11648 multiletter control sequences out of 15000+200000
+ 7908 strings out of 492945
+ 114850 string characters out of 3126252
+ 221527 words of memory out of 3000000
+ 11652 multiletter control sequences out of 15000+200000
  19784 words of font info for 59 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 28i,6n,28p,341b,432s stack positions out of 5000i,500n,10000p,200000b,50000s
- <C:\Users\jschw\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi600\
-ecbx1440.pk> <C:\Users\jschw\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour/jknappen/
-ec/dpi600\ecrm1200.pk> <C:\Users\jschw\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour
-/jknappen/ec/dpi600\ecbx1200.pk> <C:\Users\jschw\AppData\Local\MiKTeX\2.9\fonts
-/pk/ljfour/jknappen/ec/dpi600\ecbx1728.pk> <C:\Users\jschw\AppData\Local\MiKTeX
-\2.9\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx2488.pk> <C:\Users\jschw\AppData\Lo
-cal\MiKTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi600\ecti1440.pk><C:/Users/jschw/A
-ppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/
-Users/jschw/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cm
-r12.pfb><C:/Users/jschw/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/am
-sfonts/cm/cmr8.pfb><C:/Users/jschw/AppData/Local/Programs/MiKTeX 2.9/fonts/type
-1/public/amsfonts/cm/cmsy10.pfb>
-Output written on rapport.pdf (4 pages, 254869 bytes).
+ 28i,7n,28p,341b,432s stack positions out of 5000i,500n,10000p,200000b,50000s
+ <C:\Users\jeans\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi600\
+ecbx1440.pk> <C:\Users\jeans\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour/jknappen/
+ec/dpi600\ecrm1200.pk> <C:\Users\jeans\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour
+/jknappen/ec/dpi600\ecbx1200.pk> <C:\Users\jeans\AppData\Local\MiKTeX\2.9\fonts
+/pk/ljfour/jknappen/ec/dpi600\ecbx1728.pk> <C:\Users\jeans\AppData\Local\MiKTeX
+\2.9\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx2488.pk> <C:\Users\jeans\AppData\Lo
+cal\MiKTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi600\ecti1440.pk><C:/Users/jeans/A
+ppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/
+Users/jeans/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cm
+mi12.pfb><C:/Users/jeans/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/a
+msfonts/cm/cmmi8.pfb><C:/Users/jeans/AppData/Local/Programs/MiKTeX 2.9/fonts/ty
+pe1/public/amsfonts/cm/cmr12.pfb><C:/Users/jeans/AppData/Local/Programs/MiKTeX 
+2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/jeans/AppData/Local/Progr
+ams/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
+Output written on rapport.pdf (5 pages, 511950 bytes).
 PDF statistics:
- 331 PDF objects out of 1000 (max. 8388607)
- 18 named destinations out of 1000 (max. 500000)
- 104 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 353 PDF objects out of 1000 (max. 8388607)
+ 21 named destinations out of 1000 (max. 500000)
+ 109 words of extra memory for PDF output out of 10000 (max. 10000000)
 

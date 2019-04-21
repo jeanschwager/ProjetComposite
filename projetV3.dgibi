@@ -1,7 +1,7 @@
 *Titre : Projet composites
 
 OPTI DIME 3 ELEM TRI3 MODE TRID ;
-OPTI EPSI LINE;
+*OPTI EPSI LINE;
 *OPTI TRAC OPEN;
 
 *Données geometriques
@@ -26,17 +26,15 @@ p0=0. 0. 0.;
 p1=L0 sw0 0.;
 p2=L0 (sw0 + c1) 0.;
 p3=0. c0 0. ;
+p4=0 c1 0.;
 
-l1= D 20 p0 p1;
+l1=D 20 p0 p1;
 l2=D 20 p1 p2;
 l3=D 20 p2 p3;
 l4=D 20 p3 p0;
 
 
 ltot=(l1 et l2 et l3 et l4);
-oeuil1= (0. 0. 10.);
-*TRAC ltot oeuil1;
-
 
 s0=SURF ltot 'PLAN';
 
@@ -49,7 +47,23 @@ v1=(1. 0. 0.);
 v2=(0. 1. 0.);
 v3=(0. 0. 1.);
 
-vcorde=(0.5  0.375  0.);
+vcorde=0.5  (0.375+c1)  0.;
+
+l5=D 20 p4 vcorde;
+*TRAC (l5 ET ltot);
+
+*---  selon la demie corde selon jean
+petitl=sw0-(c0/2)+(c1/2);
+rap=petitl/L0;
+alpha=ATG rap;
+co1=COS alpha;
+si1= SIN alpha;
+list co1;
+list si1;
+vcorde=co1  (si1+c1)  0.;
+
+l5=D 20 p4 vcorde;
+
 
  
 Q11 = E1/(1 - (nu_12*nu_21)); 
@@ -71,13 +85,13 @@ R1prog=PROG 0. PAS ((R1_CB)/50.) R1_CB;
 
 Rk=2.*R0_CB*((R1prog/R1_CB)**2.) - R0_CB.; 
 
-Domaine=EVOL MANU Rk R1prog;
+Doap=EVOL rouge MANU Rk R1prog;
 
-*DESS Domaine;
-
+*DESS Docp;
 
 SClist=PROG;
-APlist=PROG;
+APlistv1=PROG;
+APlistv2=PROG;
 Cplist=PROG;
 T0*=T0_CB;
 T1*=T1_CB;
@@ -120,8 +134,8 @@ yref0 = (ys0 - ysmin) / cc0 ;
 pr0 = cc0 / c0 * (yref0 * ((one - yref0) ** 4)) ;
 frc0 = press coqu mo0 pr0 norm ;
 
-*TRAC frc0 s0;
-
+TRAC frc0 s0;
+opti donn 5;
 *Condition lim
 cl1=BLOQ DEPLA ROTA l4;
 
@@ -263,12 +277,13 @@ CPlist=Cplist et alpCP;
 
 Fin bloc1;
 Fin blo2;
+Docp=EVOL vert MANU Rk R1prog;
 
 *opti donn 5;
 
-evolr1=EVOL VERT MANU R1prog Rigprog1 ;
-evolr2=EVOL ROUGE MANU R1prog Riprog2 ;
-DESS (evolr1 et evolr2)'GRIL' ;
+evolr1cp=EVOL VERT MANU R1prog Rigprog1 ;
+evolr2cp=EVOL ROUGE MANU R1prog Riprog2 ;
+DESS (evolr1cp et evolr2cp)'GRIL' ;
 
 
 
@@ -369,31 +384,27 @@ Rg0  =0.5*(INTG mo0 Ener1);
 
 SI (kk EGA 1);
 Rigprog1=Rigprog1 et Rg0;
+aoptiAP='ACOS' (R1_norm/R1_CB);
+alpAP=0.5*aoptiAP;
+Aplistv1=Aplistv1 et alpAP;
 FINSI;
 
 SI (kk EGA 2);
 Riprog2=Riprog2 et Rg0;
-FINSI;
-
 aoptiAP='ACOS' (R1_norm/R1_CB);
 alpAP=0.5*aoptiAP;
-APlist=Aplist et alpAP;
+APlistv2=Aplistv2 et alpAP;
+FINSI;
+
 Fin bloc1;
 Fin blo2;
 
-evolr1=EVOL VERT MANU R1prog Rigprog1 ;
-evolr2=EVOL ROUGE MANU R1prog Riprog2 ;
-DESS (evolr1 et evolr2)'GRIL';
+evolr1ap=EVOL VERT MANU R1prog Rigprog1 ;
+evolr2ap=EVOL ROUGE MANU R1prog Riprog2 ;
+DESS (evolr1ap et evolr2ap)'GRIL';
 
-evolang=EVOL MANU APlist Rigprog1;
-list evolang;
-opti donn 5;
-
-
-
-
-
-
+evolang=EVOL MANU APlistv1 Rigprog1;
+DESS (evolang)'GRIL';
 
 *--------------------------------------------------------------
 *Sym-carré
@@ -401,8 +412,6 @@ opti donn 5;
 Rkprog=PROG ((-1)*R0_CB) PAS ((R0_CB/50.)) R0_CB;
 Rigprog1= PROG;
 Riprog2= PROG;
-
-
 
 vexprog=PROG 1. 0.5;
 veyprog= PROG 0. 0.375;
@@ -501,11 +510,17 @@ FINSI;
 aoptiSC='ACOS' (R1_norm/R1_CB);
 alpSC=0.5*aoptiSC;
 SClist=SClist et alpSC;
-Fin bloc1;
-Fin blo2;
-R1prog=PROG (DIME Rigprog1)*0.;
-evolr1=EVOL VERT MANU R1prog Rigprog1 ;
-evolr2=EVOL ROUGE MANU R1prog Riprog2 ;
-DESS (evolr1 et evolr2)'GRIL';
+FIN bloc1;
+FIN blo2;
 
+Dosc=EVOL bleu MANU R0_CB R1prog;
+
+R1prog=PROG (DIME Rigprog1)*0.;
+evolr1sc=EVOL VERT MANU R1prog Rigprog1 ;
+evolr2sc=EVOL ROUGE MANU R1prog Riprog2 ;
+DESS (evolr1sc et evolr2sc)'GRIL';
+
+DESS (evolr1cp et evolr1ap et evolr1sc);
+DESS (evolr2cp et evolr2ap et evolr2sc);
+DESS (Doap et Docp et Dosc);
 

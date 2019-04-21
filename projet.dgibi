@@ -35,6 +35,17 @@ Hyp1 = ((L0*L0)+(c0*c0))**(1./2.);
 div1 = L0/Hyp1;
 ang1 = ACOS div1;
 dir0 = ((COS ang1) (SIN ang1) 0.);
+
+*---  selon la demie corde selon jean
+petitl=sw0-(c0/2)+(c1/2);
+rap=petitl/L0;
+alpha=ATG rap;
+co1=COS alpha;
+si1= SIN alpha;
+list co1;
+list si1;
+
+
 vcorde=(0.5  0.375  0.);
 
 *_______________________ Construction du mailllage
@@ -297,8 +308,8 @@ alpCP=0.5*aoptiCP;
 
 CPlist=Cplist et alpCP;
 
-Fin bloc1;
-Fin blo2;
+FIN bloc1;
+FIN blo2;
 
 *opti donn 5;
 
